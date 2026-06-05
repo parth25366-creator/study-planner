@@ -1,5 +1,5 @@
 const express = require('express');
-const router = express.Router();
+const router = require('express').Router();
 const pool = require('../db');
 const bcrypt = require('bcryptjs');
 
@@ -17,16 +17,15 @@ router.post('/register', async (req, res) => {
       return res.status(409).json({ error: 'Email already registered' });
     }
 
-    // TODO: hash password
+    // hash password with salt rounds = 10
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     // TODO: save user to DB
 
-    res.status(201).json({ message: 'Email is available' });
+    res.status(201).json({ message: 'Password hashed successfully' });
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
   }
 });
-
-// POST /api/auth/login
-// coming soon
 
 module.exports = router;
