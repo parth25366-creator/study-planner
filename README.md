@@ -60,3 +60,4 @@ JWT_SECRET=your_secret_key
 
 ## Status
 🚧 Work in Progress — database setup complete, auth routes coming next
+
