@@ -19,23 +19,20 @@ router.post('/register', async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // save user to database
     const result = await pool.query(
       'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email',
       [name, email, hashedPassword]
     );
 
     const newUser = result.rows[0];
-
-    // TODO: generate JWT token
-
     res.status(201).json({ message: 'User registered successfully', user: newUser });
   } catch (err) {
+    console.error(err.message);
     res.status(500).json({ error: 'Server error' });
   }
 });
 
 // POST /api/auth/login
-// coming tomorrow
+// coming next
 
 module.exports = router;
