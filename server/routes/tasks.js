@@ -17,14 +17,18 @@ router.get('/', async (req, res) => {
   }
 });
 
-// POST /api/tasks - create a new task
+// POST /api/tasks
 router.post('/', async (req, res) => {
   try {
     const userId = req.user.userId;
     const { title, course, due_date, priority } = req.body;
     if (!title) return res.status(400).json({ error: 'Title is required' });
-    // TODO: insert into DB
-    res.status(201).json({ message: 'POST tasks hit' });
+
+    const result = await pool.query(
+      'INSERT INTO tasks (user_id, title, course, due_date, priority) VALUES ($1,$2,$3,$4,$5) RETURNING *',
+      [userId, title, course, due_date, priority || 'medium']
+    );
+    res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ error: 'Server error' });
