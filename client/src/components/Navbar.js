@@ -5,6 +5,12 @@ function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
+
   const links = [
     { label: 'Dashboard', path: '/dashboard' },
     { label: 'Tasks', path: '/tasks' },
@@ -26,7 +32,7 @@ function Navbar() {
         ))}
       </div>
       <div style={{ marginLeft: 'auto' }}>
-        <button onClick={() => navigate('/login')} style={{ padding: '6px 14px', border: '1px solid #ddd', borderRadius: '6px', background: 'white', cursor: 'pointer', fontSize: '13px', color: '#555' }}>
+        <button onClick={handleLogout} style={{ padding: '6px 14px', border: '1px solid #ddd', borderRadius: '6px', background: 'white', cursor: 'pointer', fontSize: '13px', color: '#555' }}>
           Logout
         </button>
       </div>
