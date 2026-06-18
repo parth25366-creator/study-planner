@@ -1,15 +1,26 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { loginUser, registerUser } from '../services/requests';
 
 function Login() {
   const navigate = useNavigate();
   const [isSignup, setIsSignup] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [form, setForm] = useState({ name: '', email: '', password: '' });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = () => {
-    if (!email || !password) { alert('Please fill in all fields'); return; }
-    navigate('/dashboard');
+  const handleSubmit = async () => {
+    setError('');
+    if (!form.email || !form.password) { setError('Please fill in all fields'); return; }
+    if (isSignup && !form.name) { setError('Name is required'); return; }
+    setLoading(true);
+    try {
+      // TODO: call API
+    } catch (err) {
+      setError(err.response?.data?.error || 'Something went wrong');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -17,12 +28,16 @@ function Login() {
       <div style={{ background: 'white', padding: '2rem', borderRadius: '8px', width: '360px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
         <h2 style={{ marginBottom: '0.25rem' }}>Study Planner 📚</h2>
         <p style={{ color: '#888', fontSize: '13px', marginBottom: '1.5rem' }}>{isSignup ? 'Create an account' : 'Welcome back!'}</p>
-        <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} style={inputStyle} />
-        <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} style={inputStyle} />
-        <button onClick={handleSubmit} style={btnStyle}>{isSignup ? 'Sign Up' : 'Login'}</button>
+        {error && <p style={{ color: '#ef4444', fontSize: '13px', marginBottom: '10px' }}>{error}</p>}
+        {isSignup && <input placeholder="Full name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} style={inputStyle} />}
+        <input type="email" placeholder="Email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} style={inputStyle} />
+        <input type="password" placeholder="Password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} style={inputStyle} />
+        <button onClick={handleSubmit} disabled={loading} style={{ ...btnStyle, opacity: loading ? 0.7 : 1 }}>
+          {loading ? 'Please wait...' : isSignup ? 'Sign Up' : 'Login'}
+        </button>
         <p style={{ textAlign: 'center', marginTop: '1rem', fontSize: '14px', color: '#666' }}>
           {isSignup ? 'Already have an account?' : "Don't have an account?"}{' '}
-          <span onClick={() => setIsSignup(!isSignup)} style={{ color: '#4f46e5', cursor: 'pointer' }}>
+          <span onClick={() => { setIsSignup(!isSignup); setError(''); }} style={{ color: '#4f46e5', cursor: 'pointer' }}>
             {isSignup ? 'Login' : 'Sign up'}
           </span>
         </p>
