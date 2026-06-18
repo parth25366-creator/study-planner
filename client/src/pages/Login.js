@@ -15,7 +15,16 @@ function Login() {
     if (isSignup && !form.name) { setError('Name is required'); return; }
     setLoading(true);
     try {
-      // TODO: call API
+      if (isSignup) {
+        await registerUser({ name: form.name, email: form.email, password: form.password });
+        setIsSignup(false);
+        setError('');
+      } else {
+        const res = await loginUser({ email: form.email, password: form.password });
+        localStorage.setItem('token', res.data.token);
+        localStorage.setItem('user', JSON.stringify(res.data.user));
+        navigate('/dashboard');
+      }
     } catch (err) {
       setError(err.response?.data?.error || 'Something went wrong');
     } finally {
@@ -50,3 +59,4 @@ const inputStyle = { width: '100%', padding: '10px 12px', marginBottom: '12px', 
 const btnStyle = { width: '100%', padding: '10px', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '6px', fontSize: '15px', cursor: 'pointer' };
 
 export default Login;
+
