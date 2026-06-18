@@ -1,18 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
+import { getTasks, createTask, toggleTask, deleteTask } from '../services/requests';
 
 function Tasks() {
   const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [form, setForm] = useState({ title: '', course: '', dueDate: '', priority: 'medium' });
 
-  const addTask = () => {
+  // fetch tasks on load
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const res = await getTasks();
+        setTasks(res.data);
+      } catch (err) {
+        console.error('Failed to fetch tasks', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTasks();
+  }, []);
+
+  const addTask = async () => {
     if (!form.title) return;
-    setTasks([...tasks, { ...form, id: Date.now(), done: false }]);
-    setForm({ title: '', course: '', dueDate: '', priority: 'medium' });
+    try {
+      const res = await createTask({ title: form.title, course: form.course, due_date: form.dueDate, priority: form.priority });
+      setTasks([res.data, ...tasks]);
+      setForm({ title: '', course: '', dueDate: '', priority: 'medium' });
+    } catch (err) {
+      console.error('Failed to create task', err);
+    }
   };
 
-  const toggleDone = (id) => setTasks(tasks.map(t => t.id === id ? { ...t, done: !t.done } : t));
-  const deleteTask = (id) => setTasks(tasks.filter(t => t.id !== id));
+  const handleToggle = async (id) => {
+    try {
+      const res = await toggleTask(id);
+      setTasks(tasks.map(t => t.id === id ? res.data : t));
+    } catch (err) {
+      console.error('Failed to toggle task', err);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteTask(id);
+      setTasks(tasks.filter(t => t.id !== id));
+    } catch (err) {
+      console.error('Failed to delete task', err);
+    }
+  };
+
   const priorityColor = { high: '#ef4444', medium: '#f59e0b', low: '#10b981' };
 
   return (
@@ -30,21 +68,20 @@ function Tasks() {
             <option value="medium">Medium Priority</option>
             <option value="low">Low Priority</option>
           </select>
-          <button onClick={addTask} style={{ padding: '10px 20px', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>
-            Add Task
-          </button>
+          <button onClick={addTask} style={{ padding: '10px 20px', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Add Task</button>
         </div>
         <div style={{ marginTop: '1.5rem' }}>
-          {tasks.length === 0 && <p style={{ color: '#aaa' }}>No tasks yet. Add one above!</p>}
+          {loading && <p style={{ color: '#aaa' }}>Loading tasks...</p>}
+          {!loading && tasks.length === 0 && <p style={{ color: '#aaa' }}>No tasks yet. Add one above!</p>}
           {tasks.map(task => (
             <div key={task.id} style={{ background: 'white', borderRadius: '8px', padding: '1rem 1.25rem', marginBottom: '10px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', gap: '12px', opacity: task.done ? 0.5 : 1 }}>
-              <input type="checkbox" checked={task.done} onChange={() => toggleDone(task.id)} />
+              <input type="checkbox" checked={task.done} onChange={() => handleToggle(task.id)} />
               <div style={{ flex: 1 }}>
                 <p style={{ fontWeight: '500', textDecoration: task.done ? 'line-through' : 'none' }}>{task.title}</p>
-                <p style={{ fontSize: '13px', color: '#888' }}>{task.course} · Due: {task.dueDate || 'No date'}</p>
+                <p style={{ fontSize: '13px', color: '#888' }}>{task.course} · Due: {task.due_date ? task.due_date.split('T')[0] : 'No date'}</p>
               </div>
               <span style={{ fontSize: '11px', padding: '3px 10px', borderRadius: '20px', background: priorityColor[task.priority] + '22', color: priorityColor[task.priority], fontWeight: '500' }}>{task.priority}</span>
-              <button onClick={() => deleteTask(task.id)} style={{ background: 'none', border: 'none', color: '#ccc', cursor: 'pointer', fontSize: '16px' }}>✕</button>
+              <button onClick={() => handleDelete(task.id)} style={{ background: 'none', border: 'none', color: '#ccc', cursor: 'pointer', fontSize: '16px' }}>✕</button>
             </div>
           ))}
         </div>
