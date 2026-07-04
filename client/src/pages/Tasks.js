@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Spinner from '../components/Spinner';
+import ErrorBanner from '../components/ErrorBanner';
 import Navbar from '../components/Navbar';
 import { getTasks, createTask, toggleTask, deleteTask } from '../services/requests';
 
 function Tasks() {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [form, setForm] = useState({ title: '', course: '', dueDate: '', priority: 'medium' });
 
   // fetch tasks on load
@@ -15,7 +17,7 @@ function Tasks() {
         const res = await getTasks();
         setTasks(res.data);
       } catch (err) {
-        console.error('Failed to fetch tasks', err);
+        setError('Failed to load tasks. Please refresh.');
       } finally {
         setLoading(false);
       }
@@ -94,4 +96,5 @@ function Tasks() {
 const inp = { display: 'block', width: '100%', padding: '9px 12px', marginBottom: '10px', border: '1px solid #ddd', borderRadius: '6px', fontSize: '14px', boxSizing: 'border-box' };
 
 export default Tasks;
+
 
