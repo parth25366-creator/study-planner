@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Spinner from '../components/Spinner';
 import Navbar from '../components/Navbar';
 import { getTasks, createTask, toggleTask, deleteTask } from '../services/requests';
 
@@ -71,7 +72,7 @@ function Tasks() {
           <button onClick={addTask} style={{ padding: '10px 20px', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Add Task</button>
         </div>
         <div style={{ marginTop: '1.5rem' }}>
-          {loading && <p style={{ color: '#aaa' }}>Loading tasks...</p>}
+          {loading && <Spinner />}
           {!loading && tasks.length === 0 && <p style={{ color: '#aaa' }}>No tasks yet. Add one above!</p>}
           {tasks.map(task => (
             <div key={task.id} style={{ background: 'white', borderRadius: '8px', padding: '1rem 1.25rem', marginBottom: '10px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', gap: '12px', opacity: task.done ? 0.5 : 1 }}>
@@ -93,3 +94,4 @@ function Tasks() {
 const inp = { display: 'block', width: '100%', padding: '9px 12px', marginBottom: '10px', border: '1px solid #ddd', borderRadius: '6px', fontSize: '14px', boxSizing: 'border-box' };
 
 export default Tasks;
+
