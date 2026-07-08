@@ -61,6 +61,7 @@ function Tasks() {
       <Navbar />
       <div style={{ padding: '2rem', fontFamily: 'sans-serif', maxWidth: '700px' }}>
         <h1>Tasks 📝</h1>
+        <ErrorBanner message={error} />
         <div style={{ background: 'white', borderRadius: '8px', padding: '1.5rem', marginTop: '1.5rem', boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
           <h3 style={{ marginBottom: '1rem' }}>Add a Task</h3>
           <input placeholder="Task title" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} style={inp} />
