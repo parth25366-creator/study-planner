@@ -3,8 +3,8 @@
 A full-stack web app for college students to track assignments, exams and deadlines.
 
 ## Live Demo
-- 🌐 Frontend: coming soon (Vercel)
-- 🔧 Backend: coming soon (Render)
+- 🌐 Frontend: https://study-planner-amw4rbz35-parth-singh.vercel.app
+- 🔧 Backend: https://study-planner-api-ne6x.onrender.com
 
 ## Tech Stack
 - **Frontend:** React, React Router, Axios
@@ -81,4 +81,4 @@ REACT_APP_API_URL=http://localhost:5000/api
 - Frontend → [Vercel](https://vercel.com)
 
 ## Status
-🚧 Work in Progress — frontend + backend fully connected, deployment next
+✅ Fully deployed and live!
