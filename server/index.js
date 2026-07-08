@@ -22,6 +22,10 @@ app.get('/', (req, res) => {
   res.json({ message: 'Study Planner API is running!' });
 });
 
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
